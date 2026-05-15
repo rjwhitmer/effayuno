@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">Formula1</string>
+    <string name="home_link">Home</string>
+    <string name="meeting_link">Meetings</string>
+    <string name="constructors_link">Constructors</string>
+    <string name="drivers_link">Drivers</string>
+    <string name="drivers_championships">Drivers Championship Standings</string>
+    <string name="next_session_link">Show next sessions</string>
+    <string name="qualifying_results">Qualifying Results</string>
+    <string name="race_results">Race results</string>
+    <string name="sprint_race_results">Sprint race results</string>
+    <string name="sprint_qualifying_results">Sprint qualifying results</string>
+    <string name="hide_next_session">Hide next sessions</string>
+    <string name="drivers_not_found">Drivers not found</string>
+    <string name="live_session_message">Live session in progress. Try again later</string>
+    <string name="gap_to_lead">Gap to Lead</string>
+    <string name="interval">Interval</string>
+    <string name="points">Points</string>
+    <string name="team_image">Team image</string>
+    <string name="driver_image">Driver image</string>
+    <string name="cancel_race_weekend">Race weekend cancelled</string>
+    <string name="race">Race</string>
+    <string name="sprint_qualifying">Sprint qualifying</string>
+    <string name="qualifying">Qualifying</string>
+    <string name="sprint_race">Sprint Race</string>
+    <string name="constructors_championships">Construtors Championship Standings</string>
+    <string name="no_data">No data</string>
+</resources>

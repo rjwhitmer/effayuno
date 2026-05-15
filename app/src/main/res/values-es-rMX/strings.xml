@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Formula1</string>
+    <string name="home_link">Hogar</string>
+    <string name="meeting_link">Sesiones</string>
+    <string name="constructors_link">Escuderias</string>
+    <string name="drivers_link">Pilotos</string>
+    <string name="drivers_championships">Campeonato de Pilotos</string>
+    <string name="next_session_link">Mostrar las próximas sesiones</string>
+    <string name="qualifying_results">Resultados de la clasificación</string>
+    <string name="race_results">Resultados de la carrera</string>
+    <string name="sprint_race_results">Resultados de la carrera al sprint</string>
+    <string name="sprint_qualifying_results">Resultados de la clasificación al sprint</string>
+    <string name="hide_next_session">Ocultar las próximas sesiones</string>
+    <string name="drivers_not_found">Pilotos no encontrados</string>
+    <string name="live_session_message">Sesión en vivo en curso. Intente de nuevo más tarde.</string>
+    <string name="gap_to_lead">Distancia respecto al líder</string>
+    <string name="interval">Intervalo</string>
+    <string name="points">Puntos</string>
+    <string name="team_image">Foto del equipo</string>
+    <string name="driver_image">Foto del piloto</string>
+    <string name="cancel_race_weekend">Se cancela el fin de semana de carreras</string>
+    <string name="race">Carrera</string>
+    <string name="sprint_qualifying">Clasificación al Sprint</string>
+    <string name="qualifying">Clasificador</string>
+    <string name="sprint_race">Carrera al Sprint</string>
+    <string name="constructors_championships">Campeonato de Escuderias</string>
+    <string name="no_data">No hay datos</string>
+</resources>
