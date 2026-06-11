@@ -9,4 +9,5 @@ object HttpRoutes {
     const val CHAMPIONSHIP = "championship_drivers?session_key=latest"
     const val CONSTRUCTORS = "championship_teams?session_key=latest"
     const val MEETINGS = "meetings"
+    const val STARTING_GRID = "starting_grid"
 }

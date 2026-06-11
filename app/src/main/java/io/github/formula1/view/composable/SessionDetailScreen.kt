@@ -44,6 +44,7 @@ import io.github.formula1.model.Resource
 import io.github.formula1.model.dto.DriverResponse
 import io.github.formula1.model.dto.QualifierSessionResult
 import io.github.formula1.model.dto.RaceSessionResult
+import io.github.formula1.model.dto.StartingGridResponse
 import io.github.formula1.repository.DriverRepository
 import io.github.formula1.repository.SessionRepository
 import io.github.formula1.view.DriverViewModel
@@ -70,11 +71,13 @@ fun SessionDetailScreen(navController: NavController, sessionKey: Int, meetingKe
     val driverState = driverViewModel.drivers.observeAsState()
     val qualifyingSessionResult = sessionViewModel.qualifyingSessions.observeAsState()
     val raceSessionResult = sessionViewModel.raceSessions.observeAsState()
+    val polePosition = sessionViewModel.polePosition.observeAsState()
 
     LaunchedEffect(Unit) {
         driverViewModel.fetchDriversSessionSpecific(sessionKey, meetingKey)
         if (sessionType == "Race") {
             sessionViewModel.fetchRaceSessionResult(meetingKey = meetingKey, sessionKey = sessionKey)
+            sessionViewModel.fetchPolePosition(meetingKey = meetingKey, position = 1)
         } else if (sessionType == "Qualifying") {
             sessionViewModel.fetchQualifyingSessionResult(meetingKey = meetingKey, sessionKey = sessionKey)
         }
@@ -93,8 +96,11 @@ fun SessionDetailScreen(navController: NavController, sessionKey: Int, meetingKe
         is Resource.Success -> {
             val qualifyingState = qualifyingSessionResult.value
             val raceState = raceSessionResult.value
+            val polePositionState = polePosition.value
+            Log.v("meeting key", meetingKey.toString())
+            Log.v("pole", polePositionState?.data?.driver_number.toString())
             if (sessionType == "Race") {
-                RaceSessionResultScreen(raceState?.data, state.data, sessionName)
+                RaceSessionResultScreen(raceState?.data, state.data, sessionName, polePositionState?.data)
             } else {
                 QualifyingSessionResultScreen(qualifyingState?.data, state.data, sessionName)
             }
@@ -148,7 +154,10 @@ fun QualifyingSessionResultScreen(results: List<QualifierSessionResult>?, driver
 }
 
 @Composable
-fun RaceSessionResultScreen(results: List<RaceSessionResult>?, drivers: List<DriverResponse>?, sessionTitle: String) {
+fun RaceSessionResultScreen(results: List<RaceSessionResult>?, drivers: List<DriverResponse>?, sessionTitle: String, polePosition: StartingGridResponse?) {
+    val driverOnPole = drivers?.first { driver ->
+        driver.driver_number.toInt() == polePosition?.driver_number
+    }
     Column(modifier = Modifier.verticalScroll(state = rememberScrollState())) {
         Text(
             text = "$sessionTitle Results",
@@ -158,8 +167,18 @@ fun RaceSessionResultScreen(results: List<RaceSessionResult>?, drivers: List<Dri
             ),
             textAlign = TextAlign.Center
         )
+        Box()
+        {
+            Text(
+                text = "Pole Position",
+                modifier = Modifier.padding(8.dp).fillMaxWidth(),
+            )
+            Text(
+                text = driverOnPole!!.full_name
+            )
+        }
         results?.forEach { result ->
-            var driver = drivers?.first { driver ->
+            val driver = drivers?.first { driver ->
                 driver.driver_number.toInt() == result.driver_number
             }
             Row() {
@@ -279,7 +298,7 @@ fun QualifyingSessionDriver(driver: DriverResponse?, sessionResult: QualifierSes
         AnimatedVisibility(
             visible = isExpanded
         ) {
-            Column() {
+            Column(modifier = Modifier.padding(8.dp)) {
                 Row() {
                     Text(text = "Q1: ")
                     Text(text = q1Duration)

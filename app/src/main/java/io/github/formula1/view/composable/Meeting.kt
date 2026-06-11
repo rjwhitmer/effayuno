@@ -45,10 +45,13 @@ import io.github.formula1.model.dto.MeetingResponse
 import io.github.formula1.model.dto.SessionResponse
 import io.github.formula1.repository.MeetingRepository
 import io.github.formula1.view.MeetingViewModel
+import kotlinx.datetime.DateTimePeriod
+import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.UtcOffset
 import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.util.Date
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
@@ -64,9 +67,10 @@ fun MeetingItem(session: SessionResponse, navController: NavController, weekendS
     val sessionTime = kotlin.time.Instant.parse(session!!.date_start)
     val trackTime = OffsetDateTime.parse(formatTrackTime(sessionTime, utcOffset)).toString()
     var isExpanded by rememberSaveable { mutableStateOf(false) }
+    val currentTime = Clock.System.now()
 
     val displayFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("MM/dd/yyyy hh:mm a")
-    val futureSession: Boolean = sessionTime > Clock.System.now()
+    val futureSession: Boolean = sessionTime > currentTime
 
     Spacer(modifier = Modifier.height(10.dp))
     Card(
@@ -142,11 +146,11 @@ fun MeetingItem(session: SessionResponse, navController: NavController, weekendS
                 AnimatedVisibility(visible = isExpanded) {
                     Column(modifier = Modifier.padding(8.dp)) {
                         MeetingInfo(meeting)
-                        if (session.is_sprint_weekend && !futureSession) {
+                        if (session.is_sprint_weekend && kotlin.time.Instant.parse(sprintQualifying.date_start) < currentTime) {
                             Box(modifier = Modifier.clickable { navController.navigate(route = sprintQualifying) }) {
                                 Text(text = stringResource(R.string.sprint_qualifying_results), modifier = Modifier.fillMaxWidth())
                             }
-                        } else if (session.is_sprint_weekend && futureSession) {
+                        } else if (session.is_sprint_weekend) {
                             Box() {
                                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                                     Text(text = stringResource(R.string.sprint_qualifying))
@@ -155,7 +159,7 @@ fun MeetingItem(session: SessionResponse, navController: NavController, weekendS
                             }
                         }
                         Spacer(modifier = Modifier.padding(4.dp))
-                        if (!futureSession) {
+                        if (kotlin.time.Instant.parse(qualifying.date_start) < currentTime) {
                             Box(modifier = Modifier.clickable { navController.navigate(route = qualifying) }) {
                                 Text(text = stringResource(R.string.qualifying_results), modifier = Modifier.fillMaxWidth())
                             }
@@ -168,7 +172,7 @@ fun MeetingItem(session: SessionResponse, navController: NavController, weekendS
                             }
                         }
                         Spacer(modifier = Modifier.padding(4.dp))
-                        if (session.is_sprint_weekend && !futureSession) {
+                        if (session.is_sprint_weekend && kotlin.time.Instant.parse(sprintRace.date_start) < currentTime) {
                             Box(modifier = Modifier.clickable { navController.navigate(route = sprintRace) }) {
                                 Text(text = stringResource(R.string.sprint_race_results), modifier = Modifier.fillMaxWidth())
                             }
