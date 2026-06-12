@@ -22,6 +22,4 @@ interface SessionService {
 
     @GET(HttpRoutes.SESSION_RESULT)
     suspend fun getQualifyingSessionResult(@QueryMap params: Map<String, Int>): Response<List<QualifierSessionResult>>
-    @GET(HttpRoutes.STARTING_GRID)
-    suspend fun getPolePosition(@QueryMap params: Map<String, Int>): Response<StartingGridResponse>
 }

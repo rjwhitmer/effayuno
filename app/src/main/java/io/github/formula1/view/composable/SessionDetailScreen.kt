@@ -38,17 +38,21 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import io.github.formula1.factory.DriverViewModelFactory
 import io.github.formula1.factory.SessionViewModelFactory
+import io.github.formula1.factory.StartingGridViewModelFactory
 import io.github.formula1.helper.convertLapTime
 import io.github.formula1.helper.ordinalOf
 import io.github.formula1.model.Resource
+import io.github.formula1.model.dto.DriverChampionship
 import io.github.formula1.model.dto.DriverResponse
 import io.github.formula1.model.dto.QualifierSessionResult
 import io.github.formula1.model.dto.RaceSessionResult
 import io.github.formula1.model.dto.StartingGridResponse
 import io.github.formula1.repository.DriverRepository
 import io.github.formula1.repository.SessionRepository
+import io.github.formula1.repository.StartingGridRepository
 import io.github.formula1.view.DriverViewModel
 import io.github.formula1.view.SessionViewModel
+import io.github.formula1.view.StartingGridViewModel
 import kotlinx.datetime.format.DateTimeFormat
 import java.text.SimpleDateFormat
 import kotlin.time.Duration
@@ -61,23 +65,25 @@ import kotlin.time.DurationUnit
 fun SessionDetailScreen(navController: NavController, sessionKey: Int, meetingKey: Int, sessionType: String?, sessionName: String) {
     val driverRepository = DriverRepository()
     val sessionRepository = SessionRepository()
+    val startingGridRepository = StartingGridRepository()
 
     val driverFactory = DriverViewModelFactory(driverRepository)
     val sessionFactory = SessionViewModelFactory(sessionRepository)
+    val startingGridFactory = StartingGridViewModelFactory(startingGridRepository)
 
     val driverViewModel: DriverViewModel = viewModel(factory = driverFactory)
     val sessionViewModel: SessionViewModel = viewModel(factory = sessionFactory)
+    val startingGridViewModel: StartingGridViewModel = viewModel(factory = startingGridFactory)
 
     val driverState = driverViewModel.drivers.observeAsState()
     val qualifyingSessionResult = sessionViewModel.qualifyingSessions.observeAsState()
     val raceSessionResult = sessionViewModel.raceSessions.observeAsState()
-    val polePosition = sessionViewModel.polePosition.observeAsState()
+    val polePosition = startingGridViewModel.polePosition.observeAsState()
 
     LaunchedEffect(Unit) {
         driverViewModel.fetchDriversSessionSpecific(sessionKey, meetingKey)
         if (sessionType == "Race") {
             sessionViewModel.fetchRaceSessionResult(meetingKey = meetingKey, sessionKey = sessionKey)
-            sessionViewModel.fetchPolePosition(meetingKey = meetingKey, position = 1)
         } else if (sessionType == "Qualifying") {
             sessionViewModel.fetchQualifyingSessionResult(meetingKey = meetingKey, sessionKey = sessionKey)
         }
@@ -96,11 +102,9 @@ fun SessionDetailScreen(navController: NavController, sessionKey: Int, meetingKe
         is Resource.Success -> {
             val qualifyingState = qualifyingSessionResult.value
             val raceState = raceSessionResult.value
-            val polePositionState = polePosition.value
-            Log.v("meeting key", meetingKey.toString())
-            Log.v("pole", polePositionState?.data?.driver_number.toString())
+//            val polePositionState = polePosition.value
             if (sessionType == "Race") {
-                RaceSessionResultScreen(raceState?.data, state.data, sessionName, polePositionState?.data)
+                RaceSessionResultScreen(raceState?.data, state.data, sessionName)
             } else {
                 QualifyingSessionResultScreen(qualifyingState?.data, state.data, sessionName)
             }
@@ -154,10 +158,14 @@ fun QualifyingSessionResultScreen(results: List<QualifierSessionResult>?, driver
 }
 
 @Composable
-fun RaceSessionResultScreen(results: List<RaceSessionResult>?, drivers: List<DriverResponse>?, sessionTitle: String, polePosition: StartingGridResponse?) {
-    val driverOnPole = drivers?.first { driver ->
-        driver.driver_number.toInt() == polePosition?.driver_number
-    }
+fun RaceSessionResultScreen(results: List<RaceSessionResult>?, drivers: List<DriverResponse>?, sessionTitle: String) {
+//    val driverOnPole = drivers?.first { driver ->
+//        if (!polePosition.isNullOrEmpty()) {
+//            driver.driver_number.toInt() == polePosition?.first()?.driver_number
+//        } else {
+//            driver.driver_number == 12
+//        }
+//    }
     Column(modifier = Modifier.verticalScroll(state = rememberScrollState())) {
         Text(
             text = "$sessionTitle Results",
@@ -167,16 +175,16 @@ fun RaceSessionResultScreen(results: List<RaceSessionResult>?, drivers: List<Dri
             ),
             textAlign = TextAlign.Center
         )
-        Box()
-        {
-            Text(
-                text = "Pole Position",
-                modifier = Modifier.padding(8.dp).fillMaxWidth(),
-            )
-            Text(
-                text = driverOnPole!!.full_name
-            )
-        }
+//        Box()
+//        {
+//            Text(
+//                text = "Pole Position",
+//                modifier = Modifier.padding(8.dp).fillMaxWidth(),
+//            )
+//            Text(
+//                text = driverOnPole?.full_name ?: ""
+//            )
+//        }
         results?.forEach { result ->
             val driver = drivers?.first { driver ->
                 driver.driver_number.toInt() == result.driver_number

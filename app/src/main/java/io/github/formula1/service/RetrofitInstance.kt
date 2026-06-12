@@ -35,4 +35,12 @@ object RetrofitInstance {
             .build()
             .create(MeetingService::class.java)
     }
+
+    val startingGridApi: StartingGridService by lazy {
+        Retrofit.Builder()
+            .baseUrl(HttpRoutes.BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(StartingGridService::class.java)
+    }
 }
