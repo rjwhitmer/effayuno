@@ -65,20 +65,16 @@ import kotlin.time.DurationUnit
 fun SessionDetailScreen(navController: NavController, sessionKey: Int, meetingKey: Int, sessionType: String?, sessionName: String) {
     val driverRepository = DriverRepository()
     val sessionRepository = SessionRepository()
-    val startingGridRepository = StartingGridRepository()
 
     val driverFactory = DriverViewModelFactory(driverRepository)
     val sessionFactory = SessionViewModelFactory(sessionRepository)
-    val startingGridFactory = StartingGridViewModelFactory(startingGridRepository)
 
     val driverViewModel: DriverViewModel = viewModel(factory = driverFactory)
     val sessionViewModel: SessionViewModel = viewModel(factory = sessionFactory)
-    val startingGridViewModel: StartingGridViewModel = viewModel(factory = startingGridFactory)
 
     val driverState = driverViewModel.drivers.observeAsState()
     val qualifyingSessionResult = sessionViewModel.qualifyingSessions.observeAsState()
     val raceSessionResult = sessionViewModel.raceSessions.observeAsState()
-    val polePosition = startingGridViewModel.polePosition.observeAsState()
 
     LaunchedEffect(Unit) {
         driverViewModel.fetchDriversSessionSpecific(sessionKey, meetingKey)
@@ -102,9 +98,11 @@ fun SessionDetailScreen(navController: NavController, sessionKey: Int, meetingKe
         is Resource.Success -> {
             val qualifyingState = qualifyingSessionResult.value
             val raceState = raceSessionResult.value
-//            val polePositionState = polePosition.value
             if (sessionType == "Race") {
-                RaceSessionResultScreen(raceState?.data, state.data, sessionName)
+                Column() {
+                    StartingGridDetailScreen(navController, meetingKey, state.data)
+                    RaceSessionResultScreen(raceState?.data, state.data, sessionName)
+                }
             } else {
                 QualifyingSessionResultScreen(qualifyingState?.data, state.data, sessionName)
             }
