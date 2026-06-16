@@ -16,8 +16,8 @@ android {
         applicationId = "io.github.formula1"
         minSdk = 29
         targetSdk = 36
-        versionCode = 8
-        versionName = "1.08"
+        versionCode = 9
+        versionName = "1.09"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
